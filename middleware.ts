@@ -1,26 +1,27 @@
-import {
-  convexAuthNextjsMiddleware,
-  createRouteMatcher,
-  nextjsMiddlewareRedirect,
-} from "@convex-dev/auth/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
 const isPublicRoute = createRouteMatcher(["/"]);
 
-export default convexAuthNextjsMiddleware(async (request, { convexAuth }) => {
-  // Existing: protect dashboard
-  if (isProtectedRoute(request) && !(await convexAuth.isAuthenticated())) {
-    return nextjsMiddlewareRedirect(request, "/");
+export default clerkMiddleware(async (auth, req) => {
+  const { isAuthenticated } = await auth();
+
+  if (isProtectedRoute(req) && !isAuthenticated) {
+    return NextResponse.redirect(new URL("/", req.url));
   }
-  
-  // New: redirect authenticated users from home to dashboard
-  if (isPublicRoute(request) && (await convexAuth.isAuthenticated())) {
-    return nextjsMiddlewareRedirect(request, "/dashboard");
+
+  if (isPublicRoute(req) && isAuthenticated) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
-}, {
-  cookieConfig: { maxAge: 60 * 60 * 24 * 30 },
+
+  return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: [
+    "/((?!.*\\..*|_next).*)",
+    "/",
+    "/(api|trpc)(.*)",
+  ],
 };

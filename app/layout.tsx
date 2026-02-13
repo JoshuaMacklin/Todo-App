@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from '@clerk/themes'
 import { ConvexClientProvider } from "@/lib/ConvexClientProvider";
 import "./globals.css";
 
@@ -30,9 +31,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ConvexAuthNextjsServerProvider>
+        <ClerkProvider
+          appearance={{
+            theme: dark,
+          }}
+        >
           <ConvexClientProvider>{children}</ConvexClientProvider>
-        </ConvexAuthNextjsServerProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

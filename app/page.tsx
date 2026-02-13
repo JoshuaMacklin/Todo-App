@@ -1,9 +1,9 @@
 "use client";
 
 import { Header } from "@/components/Header";
-import { useAuthActions } from "@convex-dev/auth/react";
+import { SignInButton } from "@clerk/nextjs";
+
 export default function Home() {
-  const { signIn } = useAuthActions();
   return (
     <div className="min-h-screen bg-neutral-950">
       <Header />
@@ -13,16 +13,17 @@ export default function Home() {
             Todo
           </h2>
           <p className="mt-2 text-neutral-400">
-            Sign in with GitHub to manage your todos.
+            Sign in to manage your todos.
           </p>
           <br />
-          <button
+          <SignInButton mode="modal">
+            <button
               type="button"
-              onClick={() => signIn("github")}
               className="rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm font-medium text-neutral-200 transition duration-150 hover:bg-neutral-700"
             >
-              Sign in with GitHub
-          </button>
+              Sign in
+            </button>
+          </SignInButton>
         </div>
       </main>
     </div>
