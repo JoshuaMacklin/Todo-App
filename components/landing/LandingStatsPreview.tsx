@@ -40,8 +40,9 @@ export function LandingStatsPreview({
 }: {
   totalCompleted: number;
 }) {
-  const chartData = MOCK_STATS.dailyCounts.map((d) => ({
+  const chartData = MOCK_STATS.dailyCounts.map((d, i) => ({
     ...d,
+    count: i === MOCK_STATS.dailyCounts.length - 1 ? totalCompleted : d.count,
     label: formatDateLabel(d.date),
   }));
 
